@@ -217,3 +217,4 @@ if target in content:
     print("Successfully updated frontend.css")
 else:
     print("Target block not found in frontend.css")
+

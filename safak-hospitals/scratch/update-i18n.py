@@ -22,3 +22,4 @@ if target in content:
     print("Successfully updated class-shm-i18n.php")
 else:
     print("Target string not found in class-shm-i18n.php")
+
