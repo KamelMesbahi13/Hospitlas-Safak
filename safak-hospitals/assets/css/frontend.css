@@ -127,7 +127,7 @@ body {
 
 .sv-hero__inner {
 	width: 100%;
-	max-width: 1240px;
+	max-width: 1360px;
 	margin-inline: auto;
 	display: flex;
 	flex-direction: column;
@@ -173,12 +173,13 @@ body {
 .sv-hero__features {
 	list-style: none;
 	margin: 0;
-	padding: 12px 24px;
+	padding: 8px 22px;
 	display: flex;
 	align-items: center;
-	gap: 14px 36px;
-	flex-wrap: wrap;
+	gap: 10px 24px;
+	flex-wrap: nowrap;
 	justify-content: center;
+	max-width: 100%;
 	border-radius: 999px;
 	border: 1px solid color-mix(in srgb, var(--sv-accent) 70%, transparent);
 	background: rgba(255,255,255,.07);
@@ -189,11 +190,11 @@ body {
 .sv-hero__features li {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 8px;
 	margin: 0;
 	padding: 0;
 	font-family: inherit;
-	font-size: clamp(14px, 1.15vw, 17px);
+	font-size: clamp(12px, 0.95vw, 14px);
 	font-weight: 500;
 	color: rgba(255,255,255,.94);
 	white-space: nowrap;
@@ -201,8 +202,8 @@ body {
 
 .sv-hero__check {
 	flex: 0 0 auto;
-	width: 36px;
-	height: 36px;
+	width: 26px;
+	height: 26px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -210,6 +211,11 @@ body {
 	color: #ffffff;
 	border: 1px solid color-mix(in srgb, var(--sv-accent) 80%, transparent);
 	background: color-mix(in srgb, var(--sv-accent) 25%, transparent);
+}
+
+.sv-hero__check svg {
+	width: 12px;
+	height: 12px;
 }
 
 /* Tablet */
@@ -223,7 +229,13 @@ body {
 		line-height: 1.2;
 	}
 	.sv-hero__features {
-		gap: 12px 20px;
+		flex-wrap: wrap;
+		gap: 12px 18px;
+		padding: 12px 18px;
+		border-radius: 24px;
+	}
+	.sv-hero__features li {
+		font-size: 13px;
 	}
 }
 
