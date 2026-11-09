@@ -39,7 +39,8 @@ body {
 	font-family: inherit;
 	color: inherit;
 	box-sizing: border-box;
-	background-color: #ffffff;
+	background-color: transparent;
+	width: 100%;
 }
 
 .shm-site-main *,
@@ -1880,9 +1881,9 @@ h6.safak-cta-tag {
 }
 
 .shm-hospital-card:hover {
-	transform: translateY(-5px);
-	box-shadow: 0 20px 42px rgba(26, 74, 114, 0.1);
-	border-color: rgba(26, 74, 114, 0.25);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 18px rgba(15, 39, 56, 0.06);
+	border-color: #cbd5e1;
 }
 
 .shm-hcard-media {
@@ -1907,7 +1908,7 @@ h6.safak-cta-tag {
 }
 
 .shm-hospital-card:hover .shm-hcard-img {
-	transform: scale(1.04);
+	transform: scale(1.015);
 }
 
 .shm-hcard-placeholder {

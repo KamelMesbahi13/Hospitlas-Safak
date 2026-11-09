@@ -560,7 +560,7 @@ function shm_whatsapp_digits( $post_id = 0 ) {
 	if ( 0 === strpos( $digits, '00' ) ) {
 		$digits = substr( $digits, 2 );
 	}
-	return $digits;
+	return ( strlen( $digits ) >= 8 ) ? $digits : '905376917695';
 }
 
 /**

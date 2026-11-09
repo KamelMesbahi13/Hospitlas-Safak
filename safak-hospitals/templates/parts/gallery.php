@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Single Hospital: Photo Gallery Part (Image-4 Showcase Style + Full Width + Blurred Lightbox).
  *

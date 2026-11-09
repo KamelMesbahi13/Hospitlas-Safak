@@ -40,7 +40,7 @@ $archive_features = array(
 
 	<!-- 1. HERO SECTION (.sv-hero) -->
 	<section class="sv-hero" id="sv-hero" dir="<?php echo esc_attr( $dir ); ?>" lang="<?php echo esc_attr( $lang ); ?>"
-	         style="--sv-bg: url('https://safakmedical.com/wp-content/uploads/2025/10/1-scaled.webp');">
+	         style="--sv-bg: url('https://safakmedical.com/wp-content/uploads/2026/07/atakent-new-1-1.webp');">
 
 	  <div class="sv-hero__inner">
 

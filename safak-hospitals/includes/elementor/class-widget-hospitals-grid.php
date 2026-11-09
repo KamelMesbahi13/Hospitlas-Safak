@@ -44,6 +44,48 @@ class SHM_Widget_Hospitals_Grid extends Widget_Base {
 		);
 
 		$this->add_control(
+			'show_hero',
+			array(
+				'label'        => __( 'Show Hero Section', 'safak-hospitals' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => __( 'Yes', 'safak-hospitals' ),
+				'label_off'    => __( 'No', 'safak-hospitals' ),
+				'return_value' => 'yes',
+				'default'      => 'yes',
+			)
+		);
+
+		$this->add_control(
+			'hero_bg',
+			array(
+				'label'       => __( 'Hero Background Image URL', 'safak-hospitals' ),
+				'type'        => Controls_Manager::TEXT,
+				'default'     => 'https://safakmedical.com/wp-content/uploads/2026/07/atakent-new-1-1.webp',
+				'condition'   => array( 'show_hero' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'hero_title',
+			array(
+				'label'       => __( 'Hero Title (optional)', 'safak-hospitals' ),
+				'type'        => Controls_Manager::TEXT,
+				'default'     => '',
+				'condition'   => array( 'show_hero' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'hero_eyebrow',
+			array(
+				'label'       => __( 'Hero Eyebrow (optional)', 'safak-hospitals' ),
+				'type'        => Controls_Manager::TEXT,
+				'default'     => '',
+				'condition'   => array( 'show_hero' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
 			'columns',
 			array(
 				'label'   => __( 'Columns', 'safak-hospitals' ),
@@ -144,6 +186,10 @@ class SHM_Widget_Hospitals_Grid extends Widget_Base {
 
 		echo SHM_Shortcodes::render_hospitals_grid(
 			array(
+				'hero'     => ! empty( $settings['show_hero'] ) ? $settings['show_hero'] : 'no',
+				'hero_bg'  => ! empty( $settings['hero_bg'] ) ? $settings['hero_bg'] : '',
+				'title'    => ! empty( $settings['hero_title'] ) ? $settings['hero_title'] : '',
+				'eyebrow'  => ! empty( $settings['hero_eyebrow'] ) ? $settings['hero_eyebrow'] : '',
 				'columns'  => $settings['columns'],
 				'limit'    => $settings['limit'],
 				'city'     => $settings['city'],
