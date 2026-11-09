@@ -197,3 +197,4 @@ if target in content:
     print("Successfully restored full size in frontend.css")
 else:
     print("Target block not found in frontend.css")
+
