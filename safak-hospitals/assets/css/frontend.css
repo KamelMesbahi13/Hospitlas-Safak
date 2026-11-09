@@ -173,10 +173,10 @@ body {
 .sv-hero__features {
 	list-style: none;
 	margin: 0;
-	padding: 5px 16px;
+	padding: 12px 28px;
 	display: inline-flex !important;
 	align-items: center;
-	gap: 6px 16px;
+	gap: 14px 32px;
 	flex-wrap: nowrap !important;
 	justify-content: center;
 	max-width: 98vw;
@@ -190,11 +190,11 @@ body {
 .sv-hero__features li {
 	display: inline-flex !important;
 	align-items: center;
-	gap: 6px;
+	gap: 12px;
 	margin: 0;
 	padding: 0;
 	font-family: inherit;
-	font-size: clamp(11px, 0.8vw, 12.5px) !important;
+	font-size: clamp(14px, 1.15vw, 17px) !important;
 	font-weight: 500;
 	color: rgba(255, 255, 255, 0.95);
 	white-space: nowrap !important;
@@ -202,9 +202,9 @@ body {
 }
 
 .sv-hero__check {
-	flex: 0 0 20px;
-	width: 20px;
-	height: 20px;
+	flex: 0 0 36px;
+	width: 36px;
+	height: 36px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -215,51 +215,52 @@ body {
 }
 
 .sv-hero__check svg {
-	width: 9px;
-	height: 9px;
+	width: 14px;
+	height: 14px;
 }
 
 /* Tablet & Mobile Devices */
-@media (max-width: 720px) {
+@media (max-width: 768px) {
 	.sv-hero {
 		min-height: 75vh;
-		padding: 90px 18px 40px;
+		padding: 95px 18px 44px;
 	}
 	.sv-hero .sv-hero__eyebrow {
-		font-size: 13px;
+		font-size: 13.5px;
 		margin-bottom: 6px;
 		line-height: 1.4;
 	}
 	.sv-hero .sv-hero__title {
-		font-size: clamp(30px, 7.5vw, 40px) !important;
+		font-size: clamp(32px, 7.5vw, 42px) !important;
 		line-height: 1.2;
 	}
 	.sv-hero__row {
-		margin-top: 20px;
+		margin-top: 22px;
 	}
 	.sv-hero__features {
 		flex-direction: column !important;
 		align-items: flex-start !important;
-		border-radius: 16px !important;
+		border-radius: 20px !important;
 		width: 100% !important;
-		max-width: 330px !important;
-		padding: 12px 14px !important;
-		gap: 8px !important;
+		max-width: 340px !important;
+		padding: 14px 18px !important;
+		gap: 10px !important;
 		flex-wrap: nowrap !important;
 	}
 	.sv-hero__features li {
-		font-size: 12px !important;
+		font-size: 13.5px !important;
 		white-space: normal !important;
 		text-align: start !important;
+		gap: 10px !important;
 	}
 	.sv-hero__check {
-		width: 18px;
-		height: 18px;
-		flex: 0 0 18px;
+		width: 28px !important;
+		height: 28px !important;
+		flex: 0 0 28px !important;
 	}
 	.sv-hero__check svg {
-		width: 8px;
-		height: 8px;
+		width: 11px !important;
+		height: 11px !important;
 	}
 }
 

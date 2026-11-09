@@ -3,7 +3,7 @@
  * Plugin Name:       Safak Hospitals Manager
  * Plugin URI:        https://safakmedical.com
  * Description:       Complete management system and frontend presentation for Safak Medical partner hospitals in Turkey: statistics, accreditations, associated doctors, galleries, automated Schema.org medical SEO, multilingual (Arabic / French / English) and Elementor-ready shortcodes.
- * Version:           1.3.0
+ * Version:           1.3.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Safak Medical
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SHM_VERSION', '1.3.0' );
+define( 'SHM_VERSION', '1.3.1' );
 define( 'SHM_FILE', __FILE__ );
 define( 'SHM_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SHM_URL', plugin_dir_url( __FILE__ ) );
