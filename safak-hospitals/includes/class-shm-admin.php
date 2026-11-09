@@ -122,6 +122,36 @@ class SHM_Admin {
 				<?php foreach ( $groups as $group_id => $group ) : ?>
 					<section class="shm-admin-panel<?php echo $first ? ' is-active' : ''; ?>" data-panel="<?php echo esc_attr( $group_id ); ?>" role="tabpanel">
 						<h3 class="shm-admin-panel-title"><?php echo esc_html( $group['label'] ); ?></h3>
+
+						<?php if ( 'general' === $group_id ) : ?>
+							<div class="shm-admin-guide-card" style="background:#f0fdf4; border:1px solid #86efac; border-radius:12px; padding:16px 20px; margin-bottom:24px; font-size:13.5px; line-height:1.65; color:#166534;">
+								<div style="display:flex; align-items:center; gap:8px; font-size:15px; font-weight:700; color:#15803d; margin-bottom:8px;">
+									<span class="dashicons dashicons-format-image" style="font-size:20px; width:20px; height:20px;"></span>
+									<span><?php esc_html_e( 'Ideal Image Dimensions & Resolution Guide (دليل الدقة والمقاسات المثالية للصور):', 'safak-hospitals' ); ?></span>
+								</div>
+								<p style="margin:0 0 10px; color:#14532d;">
+									<?php esc_html_e( 'To achieve the highest visual sharpness, elegant presentation, and ultra-fast loading across all mobile, desktop, and Retina screens, use the following recommended dimensions:', 'safak-hospitals' ); ?>
+								</p>
+								<ul style="margin:0; padding-inline-start:20px; list-style:disc;">
+									<li style="margin-bottom:6px;">
+										<strong><?php esc_html_e( 'Hero & Main Card Image (صورة الهيرو والبطاقة الرئيسية):', 'safak-hospitals' ); ?></strong>
+										<code style="background:#dcfce7; padding:2px 8px; border-radius:4px; font-size:13px; font-weight:700;">1920 × 900 px</code>
+										<?php esc_html_e( '(16:9 or 21:9 wide landscape, WebP/JPG, optimal under 400 KB).', 'safak-hospitals' ); ?>
+									</li>
+									<li style="margin-bottom:6px;">
+										<strong><?php esc_html_e( 'Overview Section Photo (صورة قسم الرعاية ونبذة المستشفى):', 'safak-hospitals' ); ?></strong>
+										<code style="background:#dcfce7; padding:2px 8px; border-radius:4px; font-size:13px; font-weight:700;">1200 × 1000 px</code>
+										<?php esc_html_e( '(approx 6:5 or 4:3 ratio, portrait/compact architectural or medical staff, under 350 KB).', 'safak-hospitals' ); ?>
+									</li>
+									<li style="margin-bottom:0;">
+										<strong><?php esc_html_e( 'Hospital Gallery Photos (صور مرافق وأقسام المستشفى):', 'safak-hospitals' ); ?></strong>
+										<code style="background:#dcfce7; padding:2px 8px; border-radius:4px; font-size:13px; font-weight:700;">1400 × 900 px</code>
+										<?php esc_html_e( '(or 1200 × 800 px — 3:2 ratio, landscape, crisp WebP/JPG for showcase display and full-screen lightbox).', 'safak-hospitals' ); ?>
+									</li>
+								</ul>
+							</div>
+						<?php endif; ?>
+
 						<div class="shm-admin-grid">
 							<?php
 							foreach ( $group['fields'] as $key => $def ) {
@@ -520,7 +550,11 @@ class SHM_Admin {
 				return implode( "\n", $lines );
 
 			case 'url':
-				return esc_url_raw( trim( (string) $raw ), array( 'http', 'https' ) );
+				$raw = trim( (string) $raw );
+				if ( preg_match( '/<iframe[^>]+src=["\']([^"\']+)["\']/i', $raw, $m ) ) {
+					$raw = html_entity_decode( $m[1], ENT_QUOTES, 'UTF-8' );
+				}
+				return esc_url_raw( $raw, array( 'http', 'https' ) );
 
 			case 'map':
 				$raw = trim( (string) $raw );

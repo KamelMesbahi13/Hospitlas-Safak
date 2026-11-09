@@ -64,29 +64,39 @@
 		}
 
 		/* 3. VIDEO TOUR FACADE CLICK-TO-LOAD */
-		var videoFacade = document.querySelector('[data-shm-video-facade]');
-		if (videoFacade) {
-			videoFacade.addEventListener('click', function() {
-				var embedUrl = this.getAttribute('data-embed');
-				if (!embedUrl) return;
+		var videoFacades = document.querySelectorAll('[data-shm-video-facade]');
+		if (videoFacades.length) {
+			videoFacades.forEach(function(facade) {
+				function loadVideo(e) {
+					if (e) e.preventDefault();
+					var embedUrl = facade.getAttribute('data-embed');
+					if (!embedUrl) return;
 
-				var iframe = document.createElement('iframe');
-				iframe.setAttribute('src', embedUrl);
-				iframe.setAttribute('frameborder', '0');
-				iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-				iframe.setAttribute('allowfullscreen', 'true');
-				iframe.style.position = 'absolute';
-				iframe.style.top = '0';
-				iframe.style.left = '0';
-				iframe.style.width = '100%';
-				iframe.style.height = '100%';
-				iframe.style.border = 'none';
+					var iframe = document.createElement('iframe');
+					iframe.setAttribute('src', embedUrl);
+					iframe.setAttribute('frameborder', '0');
+					iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+					iframe.setAttribute('allowfullscreen', 'true');
+					iframe.style.position = 'absolute';
+					iframe.style.top = '0';
+					iframe.style.left = '0';
+					iframe.style.width = '100%';
+					iframe.style.height = '100%';
+					iframe.style.border = 'none';
 
-				var wrap = document.createElement('div');
-				wrap.className = 'shm-video-responsive';
-				wrap.appendChild(iframe);
+					var wrap = document.createElement('div');
+					wrap.className = 'shm-video-responsive';
+					wrap.appendChild(iframe);
 
-				this.parentNode.replaceChild(wrap, this);
+					facade.parentNode.replaceChild(wrap, facade);
+				}
+
+				facade.addEventListener('click', loadVideo);
+				facade.addEventListener('keydown', function(e) {
+					if (e.key === 'Enter' || e.key === ' ') {
+						loadVideo(e);
+					}
+				});
 			});
 		}
 
@@ -96,6 +106,7 @@
 			var links = Array.prototype.slice.call(galleryContainer.querySelectorAll('[data-shm-gallery-item]'));
 			var mainStage = galleryContainer.querySelector('[data-shm-showcase-main]');
 			var mainImg = galleryContainer.querySelector('[data-shm-showcase-img]');
+			var captionEl = galleryContainer.querySelector('[data-shm-showcase-caption]');
 
 			if (links.length) {
 				var thumbsHtml = '';
@@ -150,8 +161,15 @@
 					var caption = item.getAttribute('data-caption') || '';
 
 					if (mainImg) {
+						mainImg.style.opacity = '0.4';
 						mainImg.setAttribute('src', largeSrc);
 						mainImg.setAttribute('alt', caption);
+						setTimeout(function() {
+							mainImg.style.opacity = '1';
+						}, 120);
+					}
+					if (captionEl) {
+						captionEl.textContent = caption;
 					}
 					if (mainStage) {
 						mainStage.setAttribute('href', fullSrc);
@@ -200,19 +218,23 @@
 					modalImg.setAttribute('src', '');
 				}
 
-				// Clicking a bottom thumbnail switches the main showcase photo (Image-4 behavior)
+				// Clicking a bottom thumbnail strictly switches the main showcase photo (NO expanding/lightbox)
 				links.forEach(function(link, i) {
 					link.addEventListener('click', function(e) {
 						e.preventDefault();
+						e.stopPropagation();
 						setShowcaseIndex(i);
 					});
 				});
 
-				// Clicking the main top image opens the blurred lightbox with side thumbnails
+				// Clicking the main top stage image opens the blurred lightbox with side thumbnails
 				if (mainStage) {
 					mainStage.addEventListener('click', function(e) {
 						e.preventDefault();
 						var idx = parseInt(mainStage.getAttribute('data-current-index'), 10) || 0;
+						openModal(idx);
+					});
+				}
 						openModal(idx);
 					});
 				}

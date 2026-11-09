@@ -1,6 +1,9 @@
 <?php
 /**
- * Single Hospital: Video Tour Embed Part.
+ * Single Hospital: Video Tour Embed Part with Native Player & Official Play Controls.
+ *
+ * Renders the native YouTube/Vimeo embed player directly with YouTube's official
+ * thumbnail, responsive 16:9 ratio, and default red/white play button.
  *
  * @package SafakHospitals
  */
@@ -33,15 +36,24 @@ if ( ! $video ) {
 
 	<div class="shm-video-player-wrap">
 		<?php if ( 'youtube' === $video['provider'] ) : ?>
-			<div class="shm-video-facade" data-shm-video-facade data-embed="<?php echo esc_url( $video['embed'] ); ?>">
-				<img src="<?php echo esc_url( $video['thumb'] ); ?>" alt="<?php echo esc_attr( get_the_title( $post_id ) ); ?>" loading="lazy" class="shm-video-poster" />
-				<button type="button" class="shm-video-play-btn" aria-label="<?php echo esc_attr( shm_t( 'play_video', $lang ) ); ?>">
-					<?php echo shm_icon( 'play', 'shm-play-icon' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-				</button>
+			<div class="shm-video-responsive">
+				<iframe
+					src="https://www.youtube.com/embed/<?php echo esc_attr( $video['id'] ); ?>?rel=0&modestbranding=1"
+					title="<?php echo esc_attr( get_the_title( $post_id ) ); ?>"
+					frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					allowfullscreen
+					loading="lazy"></iframe>
 			</div>
 		<?php elseif ( 'vimeo' === $video['provider'] ) : ?>
 			<div class="shm-video-responsive">
-				<iframe src="<?php echo esc_url( $video['embed'] ); ?>" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy" title="<?php echo esc_attr( get_the_title( $post_id ) ); ?>"></iframe>
+				<iframe
+					src="https://player.vimeo.com/video/<?php echo esc_attr( $video['id'] ); ?>?dnt=1"
+					title="<?php echo esc_attr( get_the_title( $post_id ) ); ?>"
+					frameborder="0"
+					allow="autoplay; fullscreen; picture-in-picture"
+					allowfullscreen
+					loading="lazy"></iframe>
 			</div>
 		<?php elseif ( 'file' === $video['provider'] ) : ?>
 			<div class="shm-video-responsive">

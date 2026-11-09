@@ -245,12 +245,41 @@ function shm_field_groups() {
 			'label'  => __( 'General & Photo Gallery', 'safak-hospitals' ),
 			'icon'   => 'dashicons-format-gallery',
 			'fields' => array(
-				'_hospital_main_photo'     => array( 'type' => 'image', 'label' => __( 'Hospital Main / Hero Photo (صورة الهيرو الرئيسية)', 'safak-hospitals' ), 'wide' => true, 'desc' => __( 'Upload or select the main hospital hero / card featured image.', 'safak-hospitals' ) ),
-				'_hospital_overview_photo' => array( 'type' => 'image', 'label' => __( 'Overview Section Photo (صورة قسم نبذة عن المستشفى / الرعاية الطبية)', 'safak-hospitals' ), 'wide' => true, 'desc' => __( 'Dedicated image displayed next to the hospital overview text (with the floating stats badge).', 'safak-hospitals' ) ),
-				'_hospital_gallery'        => array( 'type' => 'gallery', 'label' => __( 'Hospital Image Gallery (معرض صور المستشفى)', 'safak-hospitals' ), 'wide' => true ),
-				'_hospital_gallery_urls'   => array( 'type' => 'lines', 'label' => __( 'Additional Gallery Image URLs (Optional — one image URL per line)', 'safak-hospitals' ), 'placeholder' => "https://safakmedical.com/wp-content/uploads/2024/11/acibadem.webp\nhttps://safakmedical.com/wp-content/uploads/2024/11/memorial.webp", 'wide' => true, 'desc' => __( 'You can upload photos above using the Media Library OR paste direct image URLs here (one per line).', 'safak-hospitals' ) ),
-				'_hospital_tagline'        => array( 'type' => 'text', 'label' => __( 'Short Tagline / Subtitle', 'safak-hospitals' ), 'placeholder' => __( 'e.g. Premier JCI-Accredited Medical Center in Istanbul', 'safak-hospitals' ), 'wide' => true ),
-				'_hospital_featured'       => array( 'type' => 'checkbox', 'label' => __( 'Mark as Featured Partner Hospital', 'safak-hospitals' ) ),
+				'_hospital_main_photo'     => array(
+					'type'  => 'image',
+					'label' => __( 'Hospital Main / Hero Photo (صورة الهيرو والبطاقة الرئيسية)', 'safak-hospitals' ),
+					'wide'  => true,
+					'desc'  => __( '★ Ideal Dimensions: 1920 × 900 px (or 1920 × 1080 px — 16:9 or 21:9 ratio). Recommended format: WebP or JPG, under 400 KB. Used as the main hero banner background, archive cards, and social share previews.', 'safak-hospitals' ),
+				),
+				'_hospital_overview_photo' => array(
+					'type'  => 'image',
+					'label' => __( 'Overview Section Photo (صورة قسم نبذة عن المستشفى)', 'safak-hospitals' ),
+					'wide'  => true,
+					'desc'  => __( '★ Ideal Dimensions: 1200 × 1000 px (approx 6:5 or 4:3 ratio). Recommended format: WebP or JPG, under 350 KB. Displays in the 36px rounded overview card alongside the hospital overview text and floating stats badge.', 'safak-hospitals' ),
+				),
+				'_hospital_gallery'        => array(
+					'type'  => 'gallery',
+					'label' => __( 'Hospital Facilities Gallery (معرض مرافق وأقسام المستشفى)', 'safak-hospitals' ),
+					'wide'  => true,
+					'desc'  => __( '★ Ideal Dimensions: 1400 × 900 px (or 1200 × 800 px — 3:2 ratio). Recommended format: WebP or JPG, under 300 KB each. Used in the showcase gallery and zoomed full-screen lightbox.', 'safak-hospitals' ),
+				),
+				'_hospital_gallery_urls'   => array(
+					'type'        => 'lines',
+					'label'       => __( 'Additional Gallery Image URLs (Optional — one image URL per line)', 'safak-hospitals' ),
+					'placeholder' => "https://safakmedical.com/wp-content/uploads/2024/11/acibadem.webp\nhttps://safakmedical.com/wp-content/uploads/2024/11/memorial.webp",
+					'wide'        => true,
+					'desc'        => __( 'Paste direct image URLs here (one per line). Ideal Dimensions: 1400 × 900 px (or 1200 × 800 px). Supports optional "URL | Caption" format.', 'safak-hospitals' ),
+				),
+				'_hospital_tagline'        => array(
+					'type'        => 'text',
+					'label'       => __( 'Short Tagline / Subtitle', 'safak-hospitals' ),
+					'placeholder' => __( 'e.g. Premier JCI-Accredited Medical Center in Istanbul', 'safak-hospitals' ),
+					'wide'        => true,
+				),
+				'_hospital_featured'       => array(
+					'type'  => 'checkbox',
+					'label' => __( 'Mark as Featured Partner Hospital', 'safak-hospitals' ),
+				),
 			),
 		),
 		'stats'         => array(
@@ -933,30 +962,42 @@ function shm_parse_video( $url ) {
 		return null;
 	}
 
-	if ( preg_match( '~(?:youtube(?:-nocookie)?\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/|live/|v/)|youtu\.be/)([A-Za-z0-9_-]{11})~', $url, $m ) ) {
+	// Support pasted <iframe> embed codes
+	if ( preg_match( '/<iframe[^>]+src=["\']([^"\']+)["\']/i', $url, $iframe_m ) ) {
+		$url = html_entity_decode( $iframe_m[1], ENT_QUOTES, 'UTF-8' );
+	}
+
+	// YouTube (standard, shorts, embed, nocookie, youtu.be)
+	if ( preg_match( '~(?:youtube(?:-nocookie)?\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/|live/|v/)|youtu\.be/)([A-Za-z0-9_-]{11})~i', $url, $m ) ) {
+		$vid_id = $m[1];
 		return array(
 			'provider' => 'youtube',
-			'id'       => $m[1],
-			'embed'    => 'https://www.youtube-nocookie.com/embed/' . $m[1] . '?autoplay=1&rel=0&modestbranding=1',
-			'thumb'    => 'https://i.ytimg.com/vi/' . $m[1] . '/hqdefault.jpg',
+			'id'       => $vid_id,
+			'embed'    => 'https://www.youtube-nocookie.com/embed/' . $vid_id . '?autoplay=1&rel=0&modestbranding=1',
+			'thumb'    => 'https://i.ytimg.com/vi/' . $vid_id . '/maxresdefault.jpg',
+			'thumb_hq' => 'https://i.ytimg.com/vi/' . $vid_id . '/hqdefault.jpg',
 		);
 	}
 
-	if ( preg_match( '~vimeo\.com/(?:video/|channels/[^/]+/|groups/[^/]+/videos/)?(\d+)~', $url, $m ) ) {
+	// Vimeo
+	if ( preg_match( '~vimeo\.com/(?:video/|channels/[^/]+/|groups/[^/]+/videos/)?(\d+)~i', $url, $m ) ) {
 		return array(
 			'provider' => 'vimeo',
 			'id'       => $m[1],
 			'embed'    => 'https://player.vimeo.com/video/' . $m[1] . '?autoplay=1&dnt=1',
-			'thumb'    => '',
+			'thumb'    => 'https://vumbnail.com/' . $m[1] . '.jpg',
+			'thumb_hq' => 'https://vumbnail.com/' . $m[1] . '.jpg',
 		);
 	}
 
+	// Direct MP4 / WebM / OGG video file
 	if ( preg_match( '~\.(mp4|webm|ogg)(\?.*)?$~i', $url ) ) {
 		return array(
 			'provider' => 'file',
 			'id'       => '',
 			'embed'    => $url,
 			'thumb'    => '',
+			'thumb_hq' => '',
 		);
 	}
 
