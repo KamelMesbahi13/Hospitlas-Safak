@@ -173,13 +173,13 @@ body {
 .sv-hero__features {
 	list-style: none;
 	margin: 0;
-	padding: 6px 18px;
-	display: inline-flex;
+	padding: 5px 16px;
+	display: inline-flex !important;
 	align-items: center;
-	gap: 6px 18px;
+	gap: 6px 16px;
 	flex-wrap: nowrap !important;
 	justify-content: center;
-	max-width: 96vw;
+	max-width: 98vw;
 	border-radius: 999px;
 	border: 1px solid color-mix(in srgb, var(--sv-accent) 70%, transparent);
 	background: rgba(255, 255, 255, 0.08);
@@ -188,23 +188,23 @@ body {
 }
 
 .sv-hero__features li {
-	display: inline-flex;
+	display: inline-flex !important;
 	align-items: center;
 	gap: 6px;
 	margin: 0;
 	padding: 0;
 	font-family: inherit;
-	font-size: clamp(11.5px, 0.8vw, 13px) !important;
+	font-size: clamp(11px, 0.8vw, 12.5px) !important;
 	font-weight: 500;
 	color: rgba(255, 255, 255, 0.95);
 	white-space: nowrap !important;
-	flex-shrink: 0;
+	flex-shrink: 0 !important;
 }
 
 .sv-hero__check {
-	flex: 0 0 22px;
-	width: 22px;
-	height: 22px;
+	flex: 0 0 20px;
+	width: 20px;
+	height: 20px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -215,37 +215,15 @@ body {
 }
 
 .sv-hero__check svg {
-	width: 10px;
-	height: 10px;
+	width: 9px;
+	height: 9px;
 }
 
-/* Tablet & Smaller Devices (wraps only on narrow screens below 820px) */
-@media (max-width: 820px) {
+/* Tablet & Mobile Devices */
+@media (max-width: 720px) {
 	.sv-hero {
 		min-height: 75vh;
-		padding: 100px 20px 48px;
-	}
-	.sv-hero .sv-hero__title {
-		font-size: clamp(40px, 6vw, 52px) !important;
-		line-height: 1.2;
-	}
-	.sv-hero__features {
-		flex-wrap: wrap !important;
-		gap: 10px 16px;
-		padding: 10px 16px;
-		border-radius: 20px;
-	}
-	.sv-hero__features li {
-		font-size: 12.5px !important;
-		white-space: normal !important;
-	}
-}
-
-/* Phone */
-@media (max-width: 640px) {
-	.sv-hero {
-		min-height: 80vh;
-		padding: 85px 16px 36px;
+		padding: 90px 18px 40px;
 	}
 	.sv-hero .sv-hero__eyebrow {
 		font-size: 13px;
@@ -253,34 +231,35 @@ body {
 		line-height: 1.4;
 	}
 	.sv-hero .sv-hero__title {
-		font-size: clamp(30px, 8vw, 38px) !important;
+		font-size: clamp(30px, 7.5vw, 40px) !important;
 		line-height: 1.2;
 	}
 	.sv-hero__row {
 		margin-top: 20px;
 	}
 	.sv-hero__features {
-		flex-direction: column;
-		align-items: flex-start;
-		border-radius: 16px;
-		width: 100%;
-		max-width: 330px;
-		padding: 12px 14px;
-		gap: 8px;
+		flex-direction: column !important;
+		align-items: flex-start !important;
+		border-radius: 16px !important;
+		width: 100% !important;
+		max-width: 330px !important;
+		padding: 12px 14px !important;
+		gap: 8px !important;
+		flex-wrap: nowrap !important;
 	}
 	.sv-hero__features li {
 		font-size: 12px !important;
 		white-space: normal !important;
-		text-align: start;
+		text-align: start !important;
 	}
 	.sv-hero__check {
-		width: 20px;
-		height: 20px;
-		flex: 0 0 20px;
+		width: 18px;
+		height: 18px;
+		flex: 0 0 18px;
 	}
 	.sv-hero__check svg {
-		width: 9px;
-		height: 9px;
+		width: 8px;
+		height: 8px;
 	}
 }
 
