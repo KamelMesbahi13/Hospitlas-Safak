@@ -18,13 +18,28 @@ $related = shm_get_related_hospitals( $post_id, 3, $lang );
 if ( empty( $related ) ) {
 	return;
 }
+
+// Guaranteed language-appropriate kicker and headline for related hospitals
+$rel_kicker = shm_t( 'partner_badge', $lang );
+if ( 'fr' === $lang && ( empty( $rel_kicker ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $rel_kicker ) ) ) {
+	$rel_kicker = 'Hôpital partenaire accrédité';
+} elseif ( 'en' === $lang && ( empty( $rel_kicker ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $rel_kicker ) ) ) {
+	$rel_kicker = 'Accredited Partner Hospital';
+}
+
+$rel_title = shm_t( 'related', $lang );
+if ( 'fr' === $lang && ( empty( $rel_title ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $rel_title ) ) ) {
+	$rel_title = 'Autres hôpitaux en Turquie';
+} elseif ( 'en' === $lang && ( empty( $rel_title ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $rel_title ) ) ) {
+	$rel_title = 'Other Hospitals in Turkey';
+}
 ?>
 
 <section id="shm-related" class="safak-dept-wrapper shm-related-section" dir="<?php echo esc_attr( $dir ); ?>" lang="<?php echo esc_attr( $lang ); ?>">
 	<div class="safak-dept-header-row">
 		<div class="safak-header-start">
-			<span class="safak-kicker"><?php echo esc_html( shm_t( 'partner_badge', $lang ) ); ?></span>
-			<h2 class="safak-headline"><?php echo esc_html( shm_t( 'related', $lang ) ); ?></h2>
+			<span class="safak-kicker"><?php echo esc_html( $rel_kicker ); ?></span>
+			<h2 class="safak-headline"><?php echo esc_html( $rel_title ); ?></h2>
 		</div>
 		<div class="safak-header-end">
 			<a href="<?php echo esc_url( get_post_type_archive_link( SHM_POST_TYPE ) ); ?>" class="safak-mod-hero__btn safak-mod-hero__btn--secondary">

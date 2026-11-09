@@ -49,9 +49,25 @@ class SHM_I18n {
 	}
 
 	/**
+	 * Check whether a string contains Arabic script characters.
+	 *
+	 * Used to prevent Arabic overrides or database fallbacks from leaking into
+	 * French or English pages.
+	 *
+	 * @param string $text Text to inspect.
+	 * @return bool
+	 */
+	public static function has_arabic_chars( $text ) {
+		if ( ! is_string( $text ) || '' === $text ) {
+			return false;
+		}
+		return (bool) preg_match( '/[\x{0600}-\x{06FF}\x{0750}-\x{077F}\x{FB50}-\x{FDFF}\x{FE70}-\x{FEFF}]/u', $text );
+	}
+
+	/**
 	 * Translated string.
 	 *
-	 * Resolution order: Polylang/WPML override → built-in dictionary → key.
+	 * Resolution order: Polylang/WPML override (validated) → built-in dictionary → key.
 	 *
 	 * @param string $key  String key.
 	 * @param string $lang Language (defaults to current).
@@ -65,24 +81,49 @@ class SHM_I18n {
 			return $key;
 		}
 
-		$source  = $strings[ $key ]['ar'];
+		$source  = isset( $strings[ $key ]['ar'] ) ? $strings[ $key ]['ar'] : '';
 		$builtin = isset( $strings[ $key ][ $lang ] ) ? $strings[ $key ][ $lang ] : $source;
 		$value   = $builtin;
 
 		// Editor override through Polylang string translations.
-		if ( function_exists( 'pll_translate_string' ) ) {
-			$override = pll_translate_string( $source, $lang );
-			if ( is_string( $override ) && '' !== $override && $override !== $source ) {
-				$value = $override;
+		$override = null;
+		if ( function_exists( 'pll_translate_string' ) && '' !== $source ) {
+			$raw_override = pll_translate_string( $source, $lang );
+			if ( is_string( $raw_override ) && '' !== trim( $raw_override ) && $raw_override !== $source ) {
+				$override = $raw_override;
 			}
-		} elseif ( has_filter( 'wpml_translate_single_string' ) ) {
-			$override = apply_filters( 'wpml_translate_single_string', $source, 'safak-hospitals', 'shm_' . $key, $lang );
-			if ( is_string( $override ) && '' !== $override && $override !== $source ) {
+		} elseif ( has_filter( 'wpml_translate_single_string' ) && '' !== $source ) {
+			$raw_override = apply_filters( 'wpml_translate_single_string', $source, 'safak-hospitals', 'shm_' . $key, $lang );
+			if ( is_string( $raw_override ) && '' !== trim( $raw_override ) && $raw_override !== $source ) {
+				$override = $raw_override;
+			}
+		}
+
+		// Strictly reject Arabic string overrides when requesting French or English.
+		if ( is_string( $override ) ) {
+			if ( 'ar' !== $lang && self::has_arabic_chars( $override ) ) {
+				// Discard contaminated override; retain builtin translation.
+			} else {
 				$value = $override;
 			}
 		}
 
-		return (string) apply_filters( 'shm_string', $value, $key, $lang );
+		// Final safeguard: if French or English is requested but the value still contains Arabic,
+		// fall back to the built-in non-Arabic translation or English.
+		if ( 'ar' !== $lang && self::has_arabic_chars( $value ) ) {
+			if ( isset( $strings[ $key ][ $lang ] ) && ! self::has_arabic_chars( $strings[ $key ][ $lang ] ) ) {
+				$value = $strings[ $key ][ $lang ];
+			} elseif ( isset( $strings[ $key ]['en'] ) && ! self::has_arabic_chars( $strings[ $key ]['en'] ) ) {
+				$value = $strings[ $key ]['en'];
+			}
+		}
+
+		$filtered = apply_filters( 'shm_string', $value, $key, $lang );
+		if ( 'ar' !== $lang && self::has_arabic_chars( $filtered ) ) {
+			return $builtin;
+		}
+
+		return (string) $filtered;
 	}
 
 	/**
@@ -146,7 +187,7 @@ class SHM_I18n {
 			'doctors_kicker'        => array( 'ar' => 'الطاقم الطبي والاستشاريون', 'fr' => 'Corps Médical & Professeurs', 'en' => 'Medical Team & Specialists' ),
 			'doctors_headline'      => array( 'ar' => 'نخبة من كبار البروفيسورات والأطباء المتخصصين.', 'fr' => 'Une élite de professeurs et de médecins spécialistes.', 'en' => 'Leading professors and board-certified specialist doctors.' ),
 			'doctors_header_desc'   => array( 'ar' => 'يشرف على علاجكم أطباء استشاريون ذوو خبرة دولية واسعة وسجل حافل بالعمليات الدقيقة الناجحة.', 'fr' => 'Votre prise en charge est assurée par des spécialistes de renommée internationale au parcours clinique éprouvé.', 'en' => 'Your care is led by internationally recognized consultants with a proven track record in complex procedures.' ),
-			'gallery_kicker'        => array( 'ar' => 'بيئة استشفائية متطورة', 'fr' => 'Plateau Technique & Confort', 'en' => 'Modern Healing Environment' ),
+			'gallery_kicker'        => array( 'ar' => 'مرافق المستشفى من الداخل', 'fr' => 'Installations de l’hôpital', 'en' => 'Hospital Facilities' ),
 			'gallery_headline'      => array( 'ar' => 'جولة مصورة داخل أقسام وأجنحة المستشفى.', 'fr' => 'Visite en images des départements et suites de l’hôpital.', 'en' => 'A visual tour inside the hospital’s departments and patient suites.' ),
 			'gallery_sub_desc'      => array( 'ar' => 'بيئة استشفائية عصرية تجمع بين أعلى معايير الأمان الطبي والراحة الفندقية المتكاملة للمريض ومرافقيه.', 'fr' => 'Un environnement hospitalier moderne alliant sécurité clinique maximale et confort hôtelier pour le patient et ses proches.', 'en' => 'A modern healing environment combining maximum clinical safety with hotel-grade comfort for patients and companions.' ),
 			'view_all_photos'       => array( 'ar' => 'عرض جميع الصور', 'fr' => 'Voir toutes les photos', 'en' => 'View All Photos' ),
@@ -177,10 +218,12 @@ class SHM_I18n {
 			/* Sections */
 			'overview'              => array( 'ar' => 'نبذة عن المستشفى', 'fr' => 'Présentation de l’hôpital', 'en' => 'About the Hospital' ),
 			'toc'                   => array( 'ar' => 'محتويات الصفحة', 'fr' => 'Sommaire', 'en' => 'Table of Contents' ),
-			'gallery'               => array( 'ar' => 'جولة في مرافق المستشفى', 'fr' => 'Visite des installations', 'en' => 'Hospital Facilities & Tour' ),
+			'gallery'               => array( 'ar' => 'معرض الصور', 'fr' => 'Galerie photos', 'en' => 'Photo Gallery' ),
 			'more_photos'           => array( 'ar' => 'صور إضافية', 'fr' => 'photos de plus', 'en' => 'more photos' ),
+			'video_kicker'          => array( 'ar' => 'جولة افتراضية', 'fr' => 'Visite virtuelle', 'en' => 'Virtual Tour' ),
 			'video'                 => array( 'ar' => 'جولة افتراضية بالفيديو', 'fr' => 'Visite virtuelle en vidéo', 'en' => 'Virtual Video Tour' ),
 			'play_video'            => array( 'ar' => 'مشاهدة جولة الفيديو', 'fr' => 'Voir la visite vidéo', 'en' => 'Watch Video Tour' ),
+			'related_kicker'        => array( 'ar' => 'مستشفيات معتمدة', 'fr' => 'Hôpitaux partenaires', 'en' => 'Partner Hospitals' ),
 			'departments'           => array( 'ar' => 'الأقسام والبنية التحتية', 'fr' => 'Départements & infrastructures', 'en' => 'Departments & Infrastructure' ),
 			'departments_list'      => array( 'ar' => 'الأقسام الطبية', 'fr' => 'Départements médicaux', 'en' => 'Medical Departments' ),
 			'infrastructure_list'   => array( 'ar' => 'التجهيزات والتقنيات الطبية', 'fr' => 'Équipements & technologies', 'en' => 'Equipment & Technology' ),

@@ -24,13 +24,28 @@ $video = shm_parse_video( $video_url );
 if ( ! $video ) {
 	return;
 }
+
+// Guaranteed language-appropriate kicker and headline for video tour
+$video_kicker = shm_t( 'video_kicker', $lang );
+if ( 'fr' === $lang && ( empty( $video_kicker ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $video_kicker ) ) ) {
+	$video_kicker = 'Visite virtuelle';
+} elseif ( 'en' === $lang && ( empty( $video_kicker ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $video_kicker ) ) ) {
+	$video_kicker = 'Virtual Tour';
+}
+
+$video_title = shm_t( 'video', $lang );
+if ( 'fr' === $lang && ( empty( $video_title ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $video_title ) ) ) {
+	$video_title = 'Visite virtuelle en vidéo';
+} elseif ( 'en' === $lang && ( empty( $video_title ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $video_title ) ) ) {
+	$video_title = 'Virtual Video Tour';
+}
 ?>
 
 <section id="shm-video" class="safak-dept-wrapper shm-video-section" dir="<?php echo esc_attr( $dir ); ?>" lang="<?php echo esc_attr( $lang ); ?>">
 	<div class="safak-dept-header-row">
 		<div class="safak-header-start">
-			<span class="safak-kicker"><?php echo esc_html( shm_t( 'gallery_kicker', $lang ) ); ?></span>
-			<h2 class="safak-headline"><?php echo esc_html( shm_t( 'video', $lang ) ); ?></h2>
+			<span class="safak-kicker"><?php echo esc_html( $video_kicker ); ?></span>
+			<h2 class="safak-headline"><?php echo esc_html( $video_title ); ?></h2>
 		</div>
 	</div>
 

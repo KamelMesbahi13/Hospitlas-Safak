@@ -26,13 +26,28 @@ $first_item   = $gallery_items[0];
 $first_full   = $first_item['full'];
 $first_large  = ! empty( $first_item['large'] ) ? $first_item['large'] : $first_full;
 $first_cap    = ! empty( $first_item['caption'] ) ? $first_item['caption'] : get_the_title( $post_id );
+
+// Guaranteed language-appropriate kicker and headline (prevents Arabic DB/Polylang leak on FR/EN)
+$gallery_kicker = shm_t( 'gallery_kicker', $lang );
+if ( 'fr' === $lang && ( empty( $gallery_kicker ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $gallery_kicker ) ) ) {
+	$gallery_kicker = 'Installations de l’hôpital';
+} elseif ( 'en' === $lang && ( empty( $gallery_kicker ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $gallery_kicker ) ) ) {
+	$gallery_kicker = 'Hospital Facilities';
+}
+
+$gallery_title = shm_t( 'gallery', $lang );
+if ( 'fr' === $lang && ( empty( $gallery_title ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $gallery_title ) ) ) {
+	$gallery_title = 'Galerie photos';
+} elseif ( 'en' === $lang && ( empty( $gallery_title ) || preg_match( '/[\x{0600}-\x{06FF}]/u', $gallery_title ) ) ) {
+	$gallery_title = 'Photo Gallery';
+}
 ?>
 
 <section id="shm-gallery" class="safak-dept-wrapper shm-gallery-section" dir="<?php echo esc_attr( $dir ); ?>" lang="<?php echo esc_attr( $lang ); ?>">
 	<div class="safak-dept-header-row">
 		<div class="safak-header-start">
-			<span class="safak-kicker"><?php echo esc_html( shm_t( 'gallery_kicker', $lang ) ); ?></span>
-			<h2 class="safak-headline"><?php echo esc_html( shm_t( 'gallery', $lang ) ); ?></h2>
+			<span class="safak-kicker"><?php echo esc_html( $gallery_kicker ); ?></span>
+			<h2 class="safak-headline"><?php echo esc_html( $gallery_title ); ?></h2>
 		</div>
 		<div class="safak-header-end shm-gallery-header-end">
 			<p class="safak-header-desc-top">
@@ -70,7 +85,7 @@ $first_cap    = ! empty( $first_item['caption'] ) ? $first_item['caption'] : get
 
 		<!-- Bottom Row of Rounded Thumbnails (Buttons strictly swap photo — no expansion) -->
 		<div class="shm-showcase-strip-wrap">
-			<div class="shm-showcase-strip" aria-label="<?php echo esc_attr( shm_t( 'gallery', $lang ) ); ?>">
+			<div class="shm-showcase-strip" aria-label="<?php echo esc_attr( $gallery_title ); ?>">
 				<?php
 				foreach ( $gallery_items as $index => $item ) :
 					$full_url  = $item['full'];
