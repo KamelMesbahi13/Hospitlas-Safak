@@ -37,12 +37,20 @@ class SHM_Post_Type {
 		add_action( 'init', array( __CLASS__, 'register_post_types' ), 5 );
 		add_action( 'init', array( __CLASS__, 'ensure_supports' ), 99 );
 		add_action( 'init', array( __CLASS__, 'register_meta' ), 20 );
+		add_action( 'init', array( __CLASS__, 'add_rewrite_rules' ), 20 );
 
-		// Polylang.
+		// Polylang integration & options.
 		add_filter( 'pll_get_post_types', array( __CLASS__, 'pll_post_types' ), 10, 2 );
 		add_filter( 'pll_get_taxonomies', array( __CLASS__, 'pll_taxonomies' ), 10, 2 );
 		add_filter( 'pll_copy_post_metas', array( __CLASS__, 'pll_copy_metas' ), 10, 2 );
 		add_filter( 'pll_translate_post_meta', array( __CLASS__, 'pll_translate_meta' ), 10, 3 );
+		add_filter( 'option_polylang', array( __CLASS__, 'filter_polylang_options' ) );
+
+		// Dynamic rewrite rules for multilingual URLs (en, fr, ar).
+		add_filter( 'option_rewrite_rules', array( __CLASS__, 'filter_rewrite_rules' ) );
+
+		// Rescue multilingual hospital URLs from 404.
+		add_filter( 'pre_handle_404', array( __CLASS__, 'prevent_hospital_404' ), 10, 2 );
 
 		// Category term meta (Schema.org specialty mapping).
 		add_action( SHM_TAX_CATEGORY . '_add_form_fields', array( __CLASS__, 'term_add_field' ) );
@@ -116,6 +124,14 @@ class SHM_Post_Type {
 		add_post_type_support( SHM_POST_TYPE, array( 'title', 'editor', 'thumbnail', 'excerpt', 'revisions', 'elementor' ) );
 		register_taxonomy_for_object_type( SHM_TAX_CATEGORY, SHM_POST_TYPE );
 		register_taxonomy_for_object_type( SHM_TAX_CITY, SHM_POST_TYPE );
+
+		// Register Polylang language and translation taxonomies.
+		if ( taxonomy_exists( 'language' ) ) {
+			register_taxonomy_for_object_type( 'language', SHM_POST_TYPE );
+		}
+		if ( taxonomy_exists( 'post_translations' ) ) {
+			register_taxonomy_for_object_type( 'post_translations', SHM_POST_TYPE );
+		}
 	}
 
 	/**
@@ -229,40 +245,225 @@ class SHM_Post_Type {
 		}
 	}
 
-	/* ─────────────── Polylang integration ─────────────── */
+	/* ─────────────── Polylang integration & Rewrite Rules ─────────────── */
 
 	/**
-	 * Make hospitals translatable.
+	 * Make hospitals translatable across all Polylang interfaces.
 	 *
 	 * @param array $post_types  Post types.
 	 * @param bool  $is_settings Settings screen.
 	 * @return array
 	 */
-	public static function pll_post_types( $post_types, $is_settings ) {
-		if ( $is_settings ) {
-			unset( $post_types[ SHM_POST_TYPE ] ); // Always translated: hide from settings list.
-		} else {
-			$post_types[ SHM_POST_TYPE ] = SHM_POST_TYPE;
-		}
+	public static function pll_post_types( $post_types, $is_settings = false ) {
+		$post_types[ SHM_POST_TYPE ] = SHM_POST_TYPE;
 		return $post_types;
 	}
 
 	/**
-	 * Make taxonomies translatable.
+	 * Make taxonomies translatable across all Polylang interfaces.
 	 *
 	 * @param array $taxonomies  Taxonomies.
 	 * @param bool  $is_settings Settings screen.
 	 * @return array
 	 */
-	public static function pll_taxonomies( $taxonomies, $is_settings ) {
-		foreach ( array( SHM_TAX_CATEGORY, SHM_TAX_CITY ) as $tax ) {
-			if ( $is_settings ) {
-				unset( $taxonomies[ $tax ] );
-			} else {
-				$taxonomies[ $tax ] = $tax;
+	public static function pll_taxonomies( $taxonomies, $is_settings = false ) {
+		$taxonomies[ SHM_TAX_CATEGORY ] = SHM_TAX_CATEGORY;
+		$taxonomies[ SHM_TAX_CITY ]     = SHM_TAX_CITY;
+		return $taxonomies;
+	}
+
+	/**
+	 * Ensure Polylang options always include hospitals and taxonomies in translated lists.
+	 *
+	 * @param mixed $options Polylang options array.
+	 * @return mixed
+	 */
+	public static function filter_polylang_options( $options ) {
+		if ( is_array( $options ) ) {
+			if ( ! isset( $options['post_types'] ) || ! is_array( $options['post_types'] ) ) {
+				$options['post_types'] = array();
+			}
+			if ( ! in_array( SHM_POST_TYPE, $options['post_types'], true ) ) {
+				$options['post_types'][] = SHM_POST_TYPE;
+			}
+
+			if ( ! isset( $options['taxonomies'] ) || ! is_array( $options['taxonomies'] ) ) {
+				$options['taxonomies'] = array();
+			}
+			if ( ! in_array( SHM_TAX_CATEGORY, $options['taxonomies'], true ) ) {
+				$options['taxonomies'][] = SHM_TAX_CATEGORY;
+			}
+			if ( ! in_array( SHM_TAX_CITY, $options['taxonomies'], true ) ) {
+				$options['taxonomies'][] = SHM_TAX_CITY;
 			}
 		}
-		return $taxonomies;
+		return $options;
+	}
+
+	/**
+	 * Register rewrite rules for all languages (Arabic, English, French).
+	 */
+	public static function add_rewrite_rules() {
+		$slug = apply_filters( 'shm_rewrite_slug', 'hospitals' );
+
+		// Sub-language single hospital: /en/hospitals/slug/ and /fr/hospitals/slug/
+		add_rewrite_rule(
+			'^(en|fr)/' . $slug . '/([^/]+)/?$',
+			'index.php?post_type=' . SHM_POST_TYPE . '&name=$matches[2]&hospitals=$matches[2]&lang=$matches[1]',
+			'top'
+		);
+
+		// Sub-language hospital archive: /en/hospitals/ and /fr/hospitals/
+		add_rewrite_rule(
+			'^(en|fr)/' . $slug . '/?$',
+			'index.php?post_type=' . SHM_POST_TYPE . '&lang=$matches[1]',
+			'top'
+		);
+
+		// Sub-language hospital archive paged: /en/hospitals/page/2/
+		add_rewrite_rule(
+			'^(en|fr)/' . $slug . '/page/([0-9]+)/?$',
+			'index.php?post_type=' . SHM_POST_TYPE . '&paged=$matches[2]&lang=$matches[1]',
+			'top'
+		);
+
+		// Sub-language categories: /en/hospital-category/slug/
+		add_rewrite_rule(
+			'^(en|fr)/hospital-category/([^/]+)/?$',
+			'index.php?' . SHM_TAX_CATEGORY . '=$matches[2]&lang=$matches[1]',
+			'top'
+		);
+
+		// Sub-language cities: /en/hospital-city/slug/
+		add_rewrite_rule(
+			'^(en|fr)/hospital-city/([^/]+)/?$',
+			'index.php?' . SHM_TAX_CITY . '=$matches[2]&lang=$matches[1]',
+			'top'
+		);
+	}
+
+	/**
+	 * Dynamically inject multilingual rewrite rules into WordPress so they work immediately.
+	 *
+	 * @param array $rules Existing rewrite rules.
+	 * @return array
+	 */
+	public static function filter_rewrite_rules( $rules ) {
+		if ( ! is_array( $rules ) ) {
+			return $rules;
+		}
+
+		$slug = apply_filters( 'shm_rewrite_slug', 'hospitals' );
+		$new_rules = array(
+			'(en|fr)/' . $slug . '/([^/]+)/?$'        => 'index.php?post_type=' . SHM_POST_TYPE . '&name=$matches[2]&hospitals=$matches[2]&lang=$matches[1]',
+			'(en|fr)/' . $slug . '/?$'                => 'index.php?post_type=' . SHM_POST_TYPE . '&lang=$matches[1]',
+			'(en|fr)/' . $slug . '/page/([0-9]+)/?$'  => 'index.php?post_type=' . SHM_POST_TYPE . '&paged=$matches[2]&lang=$matches[1]',
+			'(en|fr)/hospital-category/([^/]+)/?$'    => 'index.php?' . SHM_TAX_CATEGORY . '=$matches[2]&lang=$matches[1]',
+			'(en|fr)/hospital-city/([^/]+)/?$'        => 'index.php?' . SHM_TAX_CITY . '=$matches[2]&lang=$matches[1]',
+			'ar/' . $slug . '/([^/]+)/?$'             => 'index.php?post_type=' . SHM_POST_TYPE . '&name=$matches[1]&hospitals=$matches[1]&lang=ar',
+			'ar/' . $slug . '/?$'                     => 'index.php?post_type=' . SHM_POST_TYPE . '&lang=ar',
+			$slug . '/([^/]+)/?$'                     => 'index.php?post_type=' . SHM_POST_TYPE . '&name=$matches[1]&hospitals=$matches[1]',
+			$slug . '/?$'                             => 'index.php?post_type=' . SHM_POST_TYPE,
+		);
+
+		return array_merge( $new_rules, $rules );
+	}
+
+	/**
+	 * Preempt 404 for multilingual hospital URLs if rewrite rules or Polylang didn't catch it.
+	 *
+	 * @param bool     $preempt  Whether to preempt 404.
+	 * @param WP_Query $wp_query The WP_Query instance.
+	 * @return bool
+	 */
+	public static function prevent_hospital_404( $preempt, $wp_query ) {
+		if ( ! $wp_query->is_main_query() ) {
+			return $preempt;
+		}
+
+		$req_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$path    = trim( (string) wp_parse_url( $req_uri, PHP_URL_PATH ), '/' );
+
+		// Match /en/hospitals/slug, /fr/hospitals/slug, /hospitals/slug, /ar/hospitals/slug
+		if ( preg_match( '#^(?:(en|fr|ar)/)?hospitals/([^/?#]+)/?$#i', $path, $matches ) ) {
+			$lang = ! empty( $matches[1] ) ? strtolower( $matches[1] ) : 'ar';
+			$slug = sanitize_title( urldecode( $matches[2] ) );
+
+			if ( ! empty( $slug ) ) {
+				// Query the hospital post directly by name/slug across all languages
+				$args = array(
+					'name'             => $slug,
+					'post_type'        => SHM_POST_TYPE,
+					'post_status'      => 'publish',
+					'posts_per_page'   => 1,
+					'suppress_filters' => true,
+				);
+
+				$posts = get_posts( $args );
+
+				// Fallback: search by post_name in case sanitize_title altered non-latin characters
+				if ( empty( $posts ) ) {
+					global $wpdb;
+					$raw_slug = urldecode( $matches[2] );
+					$found_id = $wpdb->get_var( $wpdb->prepare(
+						"SELECT ID FROM {$wpdb->posts} WHERE post_type = %s AND post_status = 'publish' AND post_name = %s LIMIT 1",
+						SHM_POST_TYPE,
+						$raw_slug
+					) );
+					if ( $found_id ) {
+						$posts = array( get_post( $found_id ) );
+					}
+				}
+
+				if ( ! empty( $posts ) ) {
+					$post = $posts[0];
+
+					// Set query flags
+					$wp_query->post                 = $post;
+					$wp_query->posts                = array( $post );
+					$wp_query->post_count           = 1;
+					$wp_query->found_posts          = 1;
+					$wp_query->max_num_pages        = 1;
+					$wp_query->is_404               = false;
+					$wp_query->is_single            = true;
+					$wp_query->is_singular          = true;
+					$wp_query->queried_object       = $post;
+					$wp_query->queried_object_id    = $post->ID;
+					$wp_query->set( 'post_type', SHM_POST_TYPE );
+					$wp_query->set( 'name', $post->post_name );
+					$wp_query->set( 'hospitals', $post->post_name );
+					$wp_query->set( 'lang', $lang );
+
+					$GLOBALS['post'] = $post;
+
+					// Sync Polylang current language if available
+					if ( function_exists( 'PLL' ) && isset( PLL()->curlang ) && isset( PLL()->model ) ) {
+						$pll_lang = PLL()->model->get_language( $lang );
+						if ( $pll_lang ) {
+							PLL()->curlang = $pll_lang;
+						}
+					}
+
+					status_header( 200 );
+					return true;
+				}
+			}
+		}
+
+		// Also handle hospital archives: /en/hospitals/ or /fr/hospitals/
+		if ( preg_match( '#^(?:(en|fr|ar)/)?hospitals/?$#i', $path, $matches ) ) {
+			$lang = ! empty( $matches[1] ) ? strtolower( $matches[1] ) : 'ar';
+			$wp_query->is_404               = false;
+			$wp_query->is_archive           = true;
+			$wp_query->is_post_type_archive = true;
+			$wp_query->set( 'post_type', SHM_POST_TYPE );
+			$wp_query->set( 'lang', $lang );
+
+			status_header( 200 );
+			return true;
+		}
+
+		return $preempt;
 	}
 
 	/**
