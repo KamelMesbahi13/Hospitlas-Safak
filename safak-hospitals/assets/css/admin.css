@@ -1,0 +1,455 @@
+/**
+ * Safak Hospitals Manager - Admin Styling
+ */
+
+:root {
+	--shm-primary: #01416D;
+	--shm-primary-dark: #002d4d;
+	--shm-accent: #D30C1B;
+	--shm-whatsapp: #25D366;
+	--shm-gray-50: #f8fafc;
+	--shm-gray-100: #f1f5f9;
+	--shm-gray-200: #e2e8f0;
+	--shm-gray-300: #cbd5e1;
+	--shm-gray-500: #64748b;
+	--shm-gray-700: #334155;
+	--shm-gray-900: #0f172a;
+}
+
+/* Tabbed Layout */
+.shm-admin {
+	display: flex;
+	background: #fff;
+	border: 1px solid var(--shm-gray-200);
+	border-radius: 8px;
+	overflow: hidden;
+	margin: 10px 0;
+}
+
+.shm-admin-tabs {
+	width: 220px;
+	flex-shrink: 0;
+	background: var(--shm-gray-50);
+	border-inline-end: 1px solid var(--shm-gray-200);
+	padding: 12px 0;
+}
+
+.shm-admin-tab {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	padding: 12px 18px;
+	border: none;
+	background: transparent;
+	color: var(--shm-gray-700);
+	font-size: 13px;
+	font-weight: 600;
+	text-align: start;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	border-inline-start: 3px solid transparent;
+}
+
+.shm-admin-tab:hover {
+	background: var(--shm-gray-100);
+	color: var(--shm-primary);
+}
+
+.shm-admin-tab.is-active {
+	background: #fff;
+	color: var(--shm-primary);
+	border-inline-start-color: var(--shm-primary);
+}
+
+.shm-admin-tab .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	color: var(--shm-gray-500);
+}
+
+.shm-admin-tab.is-active .dashicons {
+	color: var(--shm-primary);
+}
+
+/* Panels */
+.shm-admin-panels {
+	flex-grow: 1;
+	padding: 24px;
+	background: #fff;
+}
+
+.shm-admin-panel {
+	display: none;
+}
+
+.shm-admin-panel.is-active {
+	display: block;
+}
+
+.shm-admin-panel-title {
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--shm-primary);
+	margin: 0 0 20px 0;
+	padding-bottom: 10px;
+	border-bottom: 2px solid var(--shm-gray-100);
+}
+
+/* Fields Grid */
+.shm-admin-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 20px;
+}
+
+.shm-admin-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.shm-admin-field.is-wide {
+	grid-column: 1 / -1;
+}
+
+.shm-admin-field label,
+.shm-admin-label {
+	font-weight: 600;
+	color: var(--shm-gray-900);
+	font-size: 13px;
+}
+
+.shm-admin-field input[type="text"],
+.shm-admin-field input[type="number"],
+.shm-admin-field input[type="url"],
+.shm-admin-field textarea,
+.shm-admin-field select {
+	border: 1px solid var(--shm-gray-300);
+	border-radius: 6px;
+	padding: 8px 12px;
+	font-size: 13px;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.shm-admin-field input:focus,
+.shm-admin-field textarea:focus,
+.shm-admin-field select:focus {
+	border-color: var(--shm-primary);
+	box-shadow: 0 0 0 2px rgba(1, 65, 109, 0.15);
+	outline: none;
+}
+
+.shm-admin-field .description {
+	color: var(--shm-gray-500);
+	font-size: 12px;
+	margin: 2px 0 0 0;
+}
+
+/* Switch */
+.shm-admin-switch {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.shm-admin-switch input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.shm-admin-switch-ui {
+	position: relative;
+	width: 44px;
+	height: 24px;
+	background: var(--shm-gray-300);
+	border-radius: 12px;
+	transition: background 0.2s ease;
+	flex-shrink: 0;
+}
+
+.shm-admin-switch-ui::after {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 20px;
+	height: 20px;
+	background: #fff;
+	border-radius: 50%;
+	transition: transform 0.2s ease;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.shm-admin-switch input:checked + .shm-admin-switch-ui {
+	background: var(--shm-primary);
+}
+
+.shm-admin-switch input:checked + .shm-admin-switch-ui::after {
+	transform: translateX(20px);
+}
+
+/* Amenities Checklist */
+.shm-admin-checklist {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 10px;
+	background: var(--shm-gray-50);
+	padding: 14px;
+	border-radius: 6px;
+	border: 1px solid var(--shm-gray-200);
+}
+
+.shm-admin-check {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	color: var(--shm-gray-700);
+	cursor: pointer;
+}
+
+/* Gallery Field */
+.shm-gallery-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 0 0 12px 0;
+	padding: 0;
+	list-style: none;
+	min-height: 40px;
+}
+
+.shm-gallery-item {
+	position: relative;
+	width: 96px;
+	height: 96px;
+	border-radius: 8px;
+	overflow: hidden;
+	border: 1px solid var(--shm-gray-300);
+	background: #fff;
+	cursor: grab;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.shm-gallery-item img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.shm-gallery-remove {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	background: rgba(0,0,0,0.65);
+	color: #fff;
+	border: none;
+	font-size: 14px;
+	line-height: 1;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.15s ease;
+}
+
+.shm-gallery-remove:hover {
+	background: var(--shm-accent);
+}
+
+.shm-gallery-clear {
+	color: #b32d2e !important;
+	text-decoration: none !important;
+	margin-inline-start: 12px !important;
+}
+
+.shm-gallery-clear:hover {
+	text-decoration: underline !important;
+}
+
+/* Doctors Relationship */
+.shm-doctors-search {
+	position: relative;
+	margin-bottom: 14px;
+}
+
+.shm-doctors-search .dashicons-search {
+	position: absolute;
+	top: 8px;
+	inset-inline-start: 10px;
+	color: var(--shm-gray-500);
+}
+
+.shm-doctors-search input {
+	padding-inline-start: 36px !important;
+}
+
+.shm-doctors-results {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 99;
+	background: #fff;
+	border: 1px solid var(--shm-gray-300);
+	border-radius: 6px;
+	box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+	max-height: 240px;
+	overflow-y: auto;
+	margin: 4px 0 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.shm-doctors-result-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 12px;
+	cursor: pointer;
+	border-bottom: 1px solid var(--shm-gray-100);
+	transition: background 0.15s ease;
+}
+
+.shm-doctors-result-item:hover {
+	background: var(--shm-gray-100);
+}
+
+.shm-doctors-result-item img,
+.shm-doctors-result-item .shm-item-ph {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	object-fit: cover;
+	background: var(--shm-gray-200);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--shm-gray-500);
+}
+
+.shm-doctors-result-info {
+	flex-grow: 1;
+}
+
+.shm-doctors-result-title {
+	font-weight: 600;
+	color: var(--shm-gray-900);
+	font-size: 13px;
+}
+
+.shm-doctors-result-meta {
+	font-size: 11px;
+	color: var(--shm-gray-500);
+}
+
+.shm-doctors-selected {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0 0 10px 0;
+	padding: 0;
+	list-style: none;
+}
+
+.shm-doctor-chip {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	background: var(--shm-gray-50);
+	border: 1px solid var(--shm-gray-200);
+	border-radius: 8px;
+	padding: 6px 12px;
+	cursor: grab;
+	transition: background 0.15s ease;
+}
+
+.shm-doctor-chip:hover {
+	background: var(--shm-gray-100);
+}
+
+.shm-doctor-chip-handle {
+	color: var(--shm-gray-500);
+	cursor: grab;
+}
+
+.shm-doctor-chip img,
+.shm-doctor-chip-ph {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	object-fit: cover;
+	background: var(--shm-gray-200);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--shm-gray-500);
+}
+
+.shm-doctor-chip-name {
+	flex-grow: 1;
+	font-weight: 600;
+	color: var(--shm-gray-900);
+	font-size: 13px;
+}
+
+.shm-doctor-chip-remove {
+	background: transparent;
+	border: none;
+	color: var(--shm-gray-500);
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+	padding: 4px;
+	border-radius: 4px;
+}
+
+.shm-doctor-chip-remove:hover {
+	color: var(--shm-accent);
+	background: rgba(211, 12, 27, 0.1);
+}
+
+/* Admin List Column Styles */
+.shm-col-thumb {
+	width: 44px;
+	height: 44px;
+	object-fit: cover;
+	border-radius: 6px;
+	border: 1px solid var(--shm-gray-200);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.shm-col-thumb--empty {
+	background: var(--shm-gray-100);
+	color: var(--shm-gray-500);
+}
+
+.shm-col-badge {
+	display: inline-block;
+	padding: 2px 7px;
+	font-size: 10px;
+	font-weight: 700;
+	border-radius: 4px;
+	background: var(--shm-gray-100);
+	color: var(--shm-gray-700);
+	text-transform: uppercase;
+}
+
+.shm-col-badge--jci {
+	background: #ecfdf5;
+	color: #047857;
+	border: 1px solid #a7f3d0;
+}
+
