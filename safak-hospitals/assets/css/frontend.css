@@ -2297,3 +2297,105 @@ img.shm-lightbox-img {
 	border-color: #1A4A72;
 	background: #f1f5f9;
 }
+
+/* =========================================================================
+   v1.2.2 OVERRIDES: smaller gallery, flat thumbnails, compact doctor cards
+   ========================================================================= */
+.shm-showcase-gallery {
+	max-width: 880px !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+.shm-showcase-stage {
+	height: 440px !important;
+	box-shadow: none !important;
+	outline: none !important;
+	border: none !important;
+}
+.shm-showcase-stage:focus,
+.shm-showcase-stage:focus-visible,
+.shm-showcase-stage:active,
+.shm-showcase-stage:hover {
+	outline: none !important;
+	border: none !important;
+	box-shadow: none !important;
+	background: #f1f5f9 !important;
+}
+.shm-showcase-strip-wrap .shm-showcase-thumb,
+.shm-showcase-strip-wrap button.shm-showcase-thumb,
+.shm-showcase-strip-wrap .shm-showcase-thumb:hover,
+.shm-showcase-strip-wrap .shm-showcase-thumb:focus,
+.shm-showcase-strip-wrap .shm-showcase-thumb:focus-visible,
+.shm-showcase-strip-wrap .shm-showcase-thumb:active,
+.shm-showcase-strip-wrap .shm-showcase-thumb.is-active {
+	-webkit-appearance: none !important;
+	appearance: none !important;
+	background: transparent !important;
+	background-color: transparent !important;
+	background-image: none !important;
+	border: 0 none transparent !important;
+	outline: 0 none !important;
+	box-shadow: none !important;
+	text-shadow: none !important;
+	color: inherit !important;
+	transform: none !important;
+	padding: 0 !important;
+}
+.shm-showcase-strip-wrap .shm-showcase-thumb { opacity: 0.6; }
+.shm-showcase-strip-wrap .shm-showcase-thumb:hover,
+.shm-showcase-strip-wrap .shm-showcase-thumb.is-active { opacity: 1 !important; }
+.shm-showcase-strip-wrap .shm-showcase-thumb { width: 110px !important; height: 76px !important; }
+
+.shm-doctor-name { font-size: 16px !important; margin: 0 0 10px !important; }
+.shm-doctor-card-body { padding: 16px 18px 18px !important; }
+.shm-doctor-specialty { font-size: 12px !important; }
+.shm-doctor-link { font-size: 13px !important; }
+
+@media (max-width: 991px) {
+	.shm-showcase-stage { height: 360px !important; }
+}
+@media (max-width: 768px) {
+	.shm-showcase-stage { height: 240px !important; }
+	.shm-showcase-strip-wrap .shm-showcase-thumb { width: 78px !important; height: 56px !important; }
+	.shm-doctors-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+	.shm-doctor-card { border-radius: 18px !important; }
+	.shm-doctor-card-media { aspect-ratio: 1 / 1 !important; }
+	.shm-doctor-card-body { padding: 12px 12px 14px !important; }
+	.shm-doctor-name { font-size: 14px !important; }
+}
+@media (max-width: 380px) {
+	.shm-doctors-grid { grid-template-columns: 1fr !important; }
+	.shm-doctor-card-media { aspect-ratio: 4 / 3 !important; }
+}
+
+/* v1.2.3: thumbnails are <div>s (no theme button styles) - zero borders */
+.shm-showcase-strip-wrap .shm-showcase-thumb {
+	border: 0 !important; outline: 0 !important; box-shadow: none !important;
+	background: transparent !important; border-radius: 14px !important;
+	overflow: hidden !important; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.shm-showcase-strip-wrap .shm-showcase-thumb * { border: 0 !important; outline: 0 !important; box-shadow: none !important; }
+.shm-showcase-strip-wrap .shm-showcase-thumb-img { border-radius: 14px !important; }
+
+/* v1.2.4: maximum-specificity reset - flat thumbnails, no border, no background on hover/active */
+html body .shm-showcase-gallery .shm-showcase-strip .shm-showcase-thumb,
+html body .shm-showcase-gallery .shm-showcase-strip .shm-showcase-thumb:hover,
+html body .shm-showcase-gallery .shm-showcase-strip .shm-showcase-thumb:focus,
+html body .shm-showcase-gallery .shm-showcase-strip .shm-showcase-thumb:active,
+html body .shm-showcase-gallery .shm-showcase-strip .shm-showcase-thumb.is-active {
+	background: none !important;
+	background-color: transparent !important;
+	border: none !important;
+	border-color: transparent !important;
+	outline: none !important;
+	box-shadow: none !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	filter: none !important;
+	transform: none !important;
+}
+html body .shm-showcase-gallery .shm-showcase-strip .shm-showcase-thumb::before,
+html body .shm-showcase-gallery .shm-showcase-strip .shm-showcase-thumb::after { display: none !important; content: none !important; }
+html body .shm-showcase-gallery .shm-showcase-strip .shm-showcase-thumb-img {
+	border: none !important; padding: 0 !important; background: none !important; box-shadow: none !important;
+}

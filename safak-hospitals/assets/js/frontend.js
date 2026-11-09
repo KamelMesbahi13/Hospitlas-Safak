@@ -235,9 +235,6 @@
 						openModal(idx);
 					});
 				}
-						openModal(idx);
-					});
-				}
 
 				thumbButtons.forEach(function(btn) {
 					btn.addEventListener('click', function() {

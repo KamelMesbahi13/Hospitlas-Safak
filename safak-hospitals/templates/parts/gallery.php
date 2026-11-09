@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Single Hospital: Photo Gallery Part (Image-4 Showcase Style + Full Width + Blurred Lightbox).
  *
@@ -70,14 +70,14 @@ $first_cap    = ! empty( $first_item['caption'] ) ? $first_item['caption'] : get
 
 		<!-- Bottom Row of Rounded Thumbnails (Buttons strictly swap photo — no expansion) -->
 		<div class="shm-showcase-strip-wrap">
-			<div class="shm-showcase-strip" role="tablist" aria-label="<?php echo esc_attr( shm_t( 'gallery', $lang ) ); ?>">
+			<div class="shm-showcase-strip" aria-label="<?php echo esc_attr( shm_t( 'gallery', $lang ) ); ?>">
 				<?php
 				foreach ( $gallery_items as $index => $item ) :
 					$full_url  = $item['full'];
 					$large_url = ! empty( $item['large'] ) ? $item['large'] : $full_url;
 					$caption   = ! empty( $item['caption'] ) ? $item['caption'] : get_the_title( $post_id );
 					?>
-					<button type="button"
+					<div data-shm-thumb tabindex="0"
 						class="shm-showcase-thumb <?php echo 0 === $index ? 'is-active' : ''; ?>"
 						data-shm-gallery-item
 						data-index="<?php echo esc_attr( $index ); ?>"
@@ -91,9 +91,11 @@ $first_cap    = ! empty( $first_item['caption'] ) ? $first_item['caption'] : get
 							loading="lazy"
 							decoding="async"
 							class="shm-showcase-thumb-img" />
-					</button>
+					</div>
 				<?php endforeach; ?>
 			</div>
 		</div>
 	</div>
 </section>
+
+
